@@ -11,35 +11,82 @@ project(MySimulation)
 find_package(Geant4 REQUIRED)
 include(${Geant4_USE_FILE})
 
-add_executable(myapp myapp.cc)
+add_executable(myapp myapp.cc src/MyDetectorConstruction.cc ...)
 target_link_libraries(myapp ${Geant4_LIBRARIES})
 ```
 
-Enable multi-threading in the application, not in the build:
-```cpp
-G4MTRunManager* rm = new G4MTRunManager();
-rm->SetNumberOfThreads(n);
+For applications with multiple source files, use a conventional layout:
+
+```
+MyApp/
+├── CMakeLists.txt
+├── myapp.cc
+├── include/
+│   ├── MyDetectorConstruction.hh
+│   ├── MyPrimaryGenerator.hh
+│   ├── MyActionInitialization.hh
+│   └── MySensitiveDetector.hh
+└── src/
+    ├── MyDetectorConstruction.cc
+    ├── MyPrimaryGenerator.cc
+    ├── MyActionInitialization.cc
+    └── MySensitiveDetector.cc
 ```
 
-## Typical development iteration
+Header guards: use `#pragma once` or traditional `#ifndef` guards. Include Geant4 headers as `#include "G4RunManager.hh"`.
 
-1. **Define geometry** — write `DetectorConstruction`, verify with `/vis/drawVolume`
-2. **Set physics** — choose factory physics list or build custom
-3. **Generate primaries** — configure source via `GPS` or `ParticleGun`
-4. **Add sensitive detectors** — instrument volumes that matter
-5. **Add output** — histogram energy spectra, fill ntuples
-6. **Run batch** — use macros with `/run/beamOn N`
-7. **Validate** — compare against known energy deposits, ranges, and cross sections
+## Environment setup
+
+Source the Geant4 environment script before building:
+
+```bash
+source /path/to/geant4/bin/geant4.sh
+```
+
+Verify the version:
+
+```bash
+geant4-config --version
+```
+
+Or use `Geant4Config.cmake` with `-DGeant4_DIR=/path/to/geant4/lib/Geant4-11.X`.
+
+## Iterative development cycle
+
+```text
+understand the problem
+→ find the closest official Geant4 example
+→ make a small change
+→ build
+→ run a small test (few events)
+→ inspect output
+→ validate physics plausibility
+→ repeat
+```
+
+### Step by step
+
+1. **Understand** — clarify what is being simulated, what observables matter, what physics processes are relevant
+2. **Find example** — check `examples/` in the Geant4 installation for the closest match to your use case
+3. **Make a small change** — one class, one volume, one detector at a time
+4. **Build** — `cmake .. && make -j$(nproc)` in the build directory
+5. **Run a small test** — 10 events is enough; use `/tracking/verbose 1` for the first few
+6. **Inspect** — check the output, histograms, log messages
+7. **Validate** — does the result make physical sense? If not, investigate before scaling up
+
+Do not attempt to write the entire application in one pass. Iteration catches mistakes early and builds confidence.
 
 ## Interactive debugging
 
-Launch with visualization:
+Launch with visualization (if Geant4 was built with it):
+
 ```bash
-./myapp -g           # Qt viewer (requires Qt build of Geant4)
-./myapp              # Terminal-only, control via /run/ commands
+./myapp -g           # Qt viewer
+./myapp              # Terminal-only
 ```
 
 Useful UI commands:
+
 ```
 /vis/drawVolume
 /vis/scene/add/trajectories
@@ -49,39 +96,13 @@ Useful UI commands:
 
 ## Common mistakes to avoid
 
-- Forgetting to call `SetSensitiveDetector()` on logical volumes
+- Forgetting to call `SetSensitiveDetector()` on logical volumes that need hits
 - Using `new` in ConstructSDandField without registering with `G4SDManager`
 - Failing to set materials on the world volume
 - Not defining particles before processes in custom physics lists
-- Using the wrong coordinate system (G4 rotation matrices)
+- Using the wrong coordinate system with G4 rotation matrices
 - Not checking overlaps with `/geometry/test/run`
 - Accumulating results in stepping action without guarding against per-thread race conditions
-- Hardcoding the number of threads without checking `G4Threading::G4GetNumberOfCores()`
-
-## Code organization
-
-For applications beyond a single file:
-```
-MyApp/
-├── CMakeLists.txt
-├── myapp.cc
-├── include/
-│   ├── MyDetectorConstruction.hh
-│   ├── MyPrimaryGenerator.hh
-│   └── MySensitiveDetector.hh
-└── src/
-    ├── MyDetectorConstruction.cc
-    ├── MyPrimaryGenerator.cc
-    └── MySensitiveDetector.cc
-```
-
-Header guards: use `#pragma once` or traditional `#ifndef` guards. Include Geant4 headers as `#include "G4RunManager.hh"`.
-
-## Environment setup
-
-Source the Geant4 environment script before building:
-```bash
-source /path/to/geant4/bin/geant4.sh
-```
-
-Or use `Geant4Config.cmake` with `-DGeant4_DIR=/path/to/geant4/lib/Geant4-version`.
+- Registering user actions directly in `main()` instead of through `G4VUserActionInitialization` (breaks MT)
+- Directly constructing `G4RunManager` or `G4MTRunManager` instead of using `G4RunManagerFactory::CreateRunManager()`
+- Using `cout` instead of `G4cout` (not thread-safe)

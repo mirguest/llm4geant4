@@ -1,77 +1,53 @@
 ---
 name: llm4geant4
-description: Develop Geant4 simulation applications. Use when building, modifying, or debugging Geant4 detector simulations — geometry, physics lists, sensitive detectors, primary generators, user actions, and CMake build systems.
-allowed-tools: Bash, Read, Write, Edit, Glob, Grep, WebSearch
+description: Geant4 domain knowledge and development guidance for coding agents.
 ---
 
-# Geant4 Application Developer
+# LLM4Geant4
 
-You are a Geant4 simulation expert. You build correct, idiomatic Geant4 applications using the patterns and conventions of the Geant4 framework.
+You are building or modifying a Geant4 simulation application. LLM4Geant4 provides trusted Geant4 domain knowledge — use it to guide your decisions, but you are the agent that writes, builds, and tests the code.
 
-## When to use this skill
+## High-level principles
 
-Use this skill when the user asks you to:
-- Create a new Geant4 simulation application
-- Add or modify detector geometry (volumes, materials, placements)
-- Configure physics lists or processes
-- Implement sensitive detectors that record energy deposits, positions, timing
-- Set up primary particle generators (guns, GPS, custom sources)
-- Add user action hooks (run, event, tracking, stepping, stacking)
-- Set up analysis output (histograms, ntuples via G4AnalysisManager)
-- Debug simulation issues (geometry overlaps, missing hits, crashes)
-- Write CMakeLists.txt for Geant4 projects
+- **Understand the scientific problem first.** Before writing code, clarify what is being simulated, what observables matter, and what physics processes are relevant.
+- **Detect the installed Geant4 version and environment.** Always check which Geant4 version is available (`geant4-config --version`) and that the environment is sourced before building.
+- **Consult relevant LLM4Geant4 knowledge when needed.** The knowledge base covers canonical examples, development practices, and validation criteria. Load the relevant parts; do not cargo-cult everything.
+- **Prefer adapting official Geant4 examples over generating applications from scratch.** The Geant4 distribution includes a rich set of validated examples in `examples/`. Find the closest match and adapt it incrementally.
+- **Use version-compatible and idiomatic Geant4 APIs.** Match the API conventions of the installed Geant4 version. When in doubt, consult the Toolkit Developer's Guide and the relevant example for that version.
+- **Make minimal and incremental changes.** Each change should be small enough that you can build, run, and verify it before moving on.
+- **Build and test after meaningful modifications.** Do not accumulate many untested changes.
+- **Run small tests before large simulations.** Start with a few events (`/run/beamOn 10`), inspect verbose output, then scale up.
+- **Validate both software correctness and physics correctness before declaring success.** Compiling and running without crashes is necessary but not sufficient. Check that the output is physically plausible.
+- **Explain important Geant4-specific decisions when the user is learning.** When choices about geometry representation, physics list selection, hit recording strategy, or MT setup matter, make them explicit.
 
-## Knowledge base
+## Knowledge areas
 
-Load the following reference files for detailed guidance:
+LLM4Geant4 maintains canonical Geant4 domain knowledge in a top-level `knowledge/` directory. Consult the relevant area when you need deeper guidance:
 
-- `knowledge/examples.md` — canonical Geant4 patterns and class hierarchy
-- `knowledge/development.md` — build system, workflow, common mistakes
-- `knowledge/validation.md` — physics validation and regression testing
+- **Examples** — canonical skeleton patterns, class hierarchy, common component patterns
+- **Development** — build system, CMake, iterative development workflow, common mistakes
+- **Validation** — geometry, physics, output, and statistical validation strategies
 
-## Workflow
+The canonical source is the `knowledge/` directory. When a particular agent runtime bundles selected knowledge into a `references/` directory, prefer the bundled version for that runtime, but understand that `knowledge/` remains authoritative.
 
-When developing a Geant4 application, follow this sequence:
+## Development workflow
 
-1. **Understand requirements** — what is being simulated? what observables matter?
-2. **Design geometry** — materials, volumes, placements
-3. **Choose physics** — factory list or custom
-4. **Configure source** — particle type, energy, position, direction
-5. **Instrument with SDs** — which volumes produce hits? what data per hit?
-6. **Add output** — histograms and/or ntuples
-7. **Build and run** — cmake, make, execute with test macro
-8. **Validate** — check geometry, physics, and output correctness
-
-## Rules
-
-- Every Geant4 C++ source file includes headers as `#include "G4Xxx.hh"` (quotes, with `.hh` suffix)
-- Use `G4NistManager` for standard materials; define custom materials with `G4Element` + `G4Material`
-- Always call `SetSensitiveDetector()` on logical volumes that need hits
-- Use `G4RunManagerFactory::CreateRunManager()` to support both sequential and MT modes
-- Prefer `G4GenericMessenger` for user-configurable parameters over hardcoded values
-- For multi-threaded builds, user actions must be created per-worker via `G4VUserActionInitialization`
-- Run `/geometry/test/run` to catch overlaps before production runs
-- Use `G4AnalysisManager` for output — it is the standard Geant4 histogramming/ntuple tool
-- Set production cuts via `/run/setCut` or in physics list — document them
-- Seed the random engine for reproducibility: `G4Random::setTheSeed(seed)`
-- Never use `cout` for output — use `G4cout` (thread-safe with thread ID prefix)
-
-## Build commands
-
-Assume Geant4 is installed and the environment is sourced (`geant4.sh`). Build with:
-
-```bash
-mkdir build && cd build
-cmake ..
-make -j$(nproc)
+```text
+understand the problem
+→ find the closest official Geant4 example
+→ make a small change
+→ build
+→ run a small test (few events)
+→ inspect output (verbose, histograms, log)
+→ validate physics plausibility
+→ repeat
 ```
 
-Run interactively (with visualization if available):
-```bash
-./myapp
-```
+Avoid generating a complete application in one large step. Iteration catches mistakes early.
 
-Run in batch mode:
-```bash
-./myapp run.mac
-```
+## After completing work
+
+- Confirm the code compiles with no warnings against the detected Geant4 version.
+- Confirm that a short test run (e.g., 10 events) produces physically plausible output.
+- If a benchmark or validation reference exists, compare against it.
+- Report which Geant4 version, physics list, and production cuts were used.

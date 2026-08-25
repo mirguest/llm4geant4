@@ -1,0 +1,35 @@
+name: "Muon Through Scintillator"
+id: basic-001-muon-scintillator
+
+criteria:
+  - id: compiles
+    label: "Compiles and runs without errors"
+    description: "The application compiles cleanly with Geant4 11.x and completes a batch run without crashes."
+    max_points: 20
+
+  - id: geometry
+    label: "Correct geometry"
+    description: "Materials, dimensions, and placements are correct. Uses G4_PLASTIC_SC_VINYLTOLUENE from NIST."
+    max_points: 20
+
+  - id: sensitive_detector
+    label: "Sensitive detector records hits"
+    description: "A sensitive detector is attached to the scintillator logical volume and records energy deposit and position per hit."
+    max_points: 20
+
+  - id: output
+    label: "Output histograms"
+    description: "Produces a ROOT or AIDA output file with at minimum the energy deposit distribution."
+    max_points: 20
+
+  - id: energy_plausibility
+    label: "Physically plausible energy deposit"
+    description: "The mean energy deposit is within a physically plausible range for a minimum-ionizing muon crossing 1 cm of plastic scintillator (order of magnitude: ~2 MeV)."
+    max_points: 10
+
+  - id: build_quality
+    label: "Clean build"
+    description: "Builds with no warnings. Uses a reasonable multi-file source structure. Uses G4RunManagerFactory."
+    max_points: 10
+
+total_points: 100
