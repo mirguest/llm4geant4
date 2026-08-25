@@ -59,7 +59,11 @@ Do not register user actions directly in `main()` via `runManager->SetUserAction
 - Inherit from `G4VUserPrimaryGeneratorAction` (placed in action initialization)
 - Use `G4ParticleGun` for simple single-particle sources
 - Use `G4GeneralParticleSource` for configurable spectra/spatial distributions
-- Set particle type via `G4ParticleTable::GetParticleDefinition()`
+- Look up particles via the particle table:
+  ```cpp
+  auto* particleTable = G4ParticleTable::GetParticleTable();
+  auto* particle = particleTable->FindParticle("mu-");
+  ```
 - Set energy, position, and momentum direction with explicit Geant4 units:
   ```cpp
   gun->SetParticleEnergy(1.0 * GeV);
@@ -83,7 +87,7 @@ Do not register user actions directly in `main()` via `runManager->SetUserAction
 | `G4UserTrackingAction` | Pre/PostUserTrackingAction — track-level decisions |
 | `G4UserSteppingAction` | UserSteppingAction — per-step monitoring (expensive, beware MT races) |
 
-All user actions should be created inside `G4VUserActionInitialization::Build()` for MT safety.
+User actions should be registered through `G4VUserActionInitialization` for MT safety. Worker-local actions are normally created in `Build()`. Master-only actions (e.g., a master `RunAction` that merges results) are created in `BuildForMaster()` when needed.
 
 ## Units
 

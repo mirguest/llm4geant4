@@ -2,34 +2,54 @@ name: "Muon Through Scintillator"
 id: basic-001-muon-scintillator
 
 criteria:
-  - id: compiles
-    label: "Compiles and runs without errors"
-    description: "The application compiles cleanly with Geant4 11.x and completes a batch run without crashes."
-    max_points: 20
+  - id: build_and_run
+    label: "Build and execution"
+    description: "The application compiles cleanly with Geant4 11.x and completes a batch run of 10,000 events without crashes."
+    max_points: 15
 
   - id: geometry
-    label: "Correct geometry"
-    description: "Materials, dimensions, and placements are correct. Uses G4_PLASTIC_SC_VINYLTOLUENE from NIST."
-    max_points: 20
+    label: "Geometry and material"
+    description: "World size, scintillator dimensions, material, and placement are correct. Uses G4_PLASTIC_SC_VINYLTOLUENE from NIST."
+    max_points: 15
 
-  - id: sensitive_detector
-    label: "Sensitive detector records hits"
-    description: "A sensitive detector is attached to the scintillator logical volume and records energy deposit and position per hit."
+  - id: primary_source
+    label: "Primary source"
+    description: "Particle is mu- with 1 GeV kinetic energy, direction +z, source position at z = -50 cm, XY distribution uniform over 1 cm × 1 cm."
+    max_points: 15
+
+  - id: physics
+    label: "Physics configuration"
+    description: "Uses QGSP_BERT reference physics list with default production cuts."
+    max_points: 10
+
+  - id: energy_scoring
+    label: "Correct per-event energy scoring"
+    description: >
+      Correctly measures the total energy deposited in the scintillator for each event.
+      The implementation may use stepping actions, a sensitive detector, or another
+      idiomatic Geant4 mechanism.
     max_points: 20
 
   - id: output
-    label: "Output histograms"
+    label: "Output"
     description: "Produces a ROOT or AIDA output file with at minimum the energy deposit distribution."
-    max_points: 20
-
-  - id: energy_plausibility
-    label: "Physically plausible energy deposit"
-    description: "The mean energy deposit is within a physically plausible range for a minimum-ionizing muon crossing 1 cm of plastic scintillator (order of magnitude: ~2 MeV)."
     max_points: 10
 
-  - id: build_quality
-    label: "Clean build"
-    description: "Builds with no warnings. Uses a reasonable multi-file source structure. Uses G4RunManagerFactory."
+  - id: physics_plausibility
+    label: "Physics plausibility"
+    description: >
+      Energy deposits are non-negative. The mean energy deposit has the expected
+      order of magnitude for a minimum-ionizing muon crossing 1 cm of plastic
+      scintillator (order of magnitude: ~2 MeV). The distribution is physically
+      sensible (no unphysical spikes or gaps).
     max_points: 10
+
+  - id: idiomatic_geant4
+    label: "Idiomatic Geant4 / code quality"
+    description: >
+      Uses G4RunManagerFactory, appropriate G4VUserActionInitialization, explicit
+      Geant4 units, reasonable source organization. Avoids unnecessary reinvention
+      of Geant4 mechanisms.
+    max_points: 5
 
 total_points: 100

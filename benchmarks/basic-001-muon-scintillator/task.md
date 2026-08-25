@@ -6,8 +6,8 @@ Simulate a 1 GeV muon passing through a single plastic scintillator slab and mea
 
 ## Geometry
 
-- **World:** a box of air large enough to contain the scintillator and the particle source (e.g., 1 m per side).
-- **Scintillator:** a 10 cm × 10 cm × 1 cm slab. Use `G4_PLASTIC_SC_VINYLTOLUENE` from Geant4/NIST materials. Center it at the origin.
+- **World:** a 120 cm × 120 cm × 120 cm box of air.
+- **Scintillator:** a 10 cm × 10 cm × 1 cm slab, centered at the origin. Use `G4_PLASTIC_SC_VINYLTOLUENE` from Geant4/NIST materials.
 
 ## Physics
 
@@ -21,21 +21,15 @@ Use `QGSP_BERT` as the reference physics list, with default production cuts.
 
 ## Deliverables
 
-A working and idiomatic Geant4 application with a reasonable source-file structure. The application must:
+A working Geant4 application that:
 
-- Build with CMake against Geant4 11.x.
-- Run in batch mode via a macro that executes 10,000 events.
-- Record the energy deposited in the scintillator per event.
-- Produce an output file (ROOT or AIDA format) containing the energy deposit distribution.
+- Builds with CMake against Geant4 11.x.
+- Runs in batch mode via a macro that executes 10,000 events.
+- Records the energy deposited in the scintillator per event.
+- Produces an output file (ROOT or AIDA format) containing the energy deposit distribution.
 
 ## Output
 
-- The application source files (`.cc`, `.hh`, `CMakeLists.txt`).
+- The application source files and `CMakeLists.txt`.
 - A batch macro (`run.mac`) for 10,000 events.
 - The generated output file with the energy deposit histogram.
-
-## Constraints
-
-- Do not force all geometry, physics, generator, sensitive-detector, and output logic into a single file. Use a reasonable multi-file structure appropriate for a Geant4 application.
-- Use explicit Geant4 units (`GeV`, `cm`, `mm`, etc.) for all physical quantities.
-- The application should use `G4RunManagerFactory::CreateRunManager()` to create the run manager.

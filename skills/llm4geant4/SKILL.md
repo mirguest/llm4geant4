@@ -13,7 +13,7 @@ You are building or modifying a Geant4 simulation application. LLM4Geant4 provid
 - **Detect the installed Geant4 version and environment.** Always check which Geant4 version is available (`geant4-config --version`) and that the environment is sourced before building.
 - **Consult relevant LLM4Geant4 knowledge when needed.** The knowledge base covers canonical examples, development practices, and validation criteria. Load the relevant parts; do not cargo-cult everything.
 - **Prefer adapting official Geant4 examples over generating applications from scratch.** The Geant4 distribution includes a rich set of validated examples in `examples/`. Find the closest match and adapt it incrementally.
-- **Use version-compatible and idiomatic Geant4 APIs.** Match the API conventions of the installed Geant4 version. When in doubt, consult the Toolkit Developer's Guide and the relevant example for that version.
+- **Use version-compatible and idiomatic Geant4 APIs.** Match the API conventions of the installed Geant4 version. When in doubt, consult the Geant4 Book for Application Developers and the relevant example for that version.
 - **Make minimal and incremental changes.** Each change should be small enough that you can build, run, and verify it before moving on.
 - **Build and test after meaningful modifications.** Do not accumulate many untested changes.
 - **Run small tests before large simulations.** Start with a few events (`/run/beamOn 10`), inspect verbose output, then scale up.

@@ -78,16 +78,10 @@ Do not attempt to write the entire application in one pass. Iteration catches mi
 
 ## Interactive debugging
 
-Launch with visualization (if Geant4 was built with it):
-
-```bash
-./myapp -g           # Qt viewer
-./myapp              # Terminal-only
-```
-
-Useful UI commands:
+Run the application in its interactive mode. Use Geant4 UI and visualization commands to inspect the geometry and a few events:
 
 ```
+/vis/open
 /vis/drawVolume
 /vis/scene/add/trajectories
 /run/beamOn 1

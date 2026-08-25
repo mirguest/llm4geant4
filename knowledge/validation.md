@@ -11,22 +11,21 @@
 
 ### 2. Physics validation
 
-- Compare energy deposit in known materials against NIST ESTAR values
-- Check particle range against CSDA range tables
-- Validate backscatter coefficients for electrons
-- Compare shower shapes for electromagnetic cascades
-- Verify neutron capture cross sections for thermal neutrons
+- Compare against an appropriate trusted external reference for the particle, material, and energy regime when available.
+- For electrons: NIST ESTAR stopping-power and CSDA range tables.
+- For hadrons and muons: PDG or established experimental data where applicable.
+- Cross-check with independent simulation results when external data is unavailable.
 
 ### 3. Output validation
 
 - Confirm event count equals `/run/beamOn N`
 - Check that histograms integrate to expected values
 - Verify energy conservation (sum of deposits + escaping energy = incident energy)
-- Validate that no negative energy deposits appear (unless Cherenkov is enabled with correct sign convention)
+- Validate that energy deposits are non-negative
 
 ### 4. Statistical validation
 
-- Run ≥10k events for percent-level precision
+- Run enough events to achieve the statistical precision required by the benchmark or analysis. The required event count depends on the variance of the observable.
 - Check that statistical uncertainties scale as 1/sqrt(N)
 - Use independent random seeds across jobs
 - Merge results from multiple independent runs
@@ -47,7 +46,8 @@ For each benchmark, maintain a reference histogram file. Compare new results:
 
 - Chi-squared test against reference
 - Kolmogorov-Smirnov test for distributions
-- Mean and RMS within 2% of reference
+
+Regression tolerances should be benchmark-specific and based on expected statistical fluctuations, reference sample size, physics configuration, and known Geant4-version effects.
 
 ## Reproducibility checklist
 
