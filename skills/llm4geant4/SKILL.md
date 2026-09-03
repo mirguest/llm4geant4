@@ -26,7 +26,12 @@ LLM4Geant4 maintains canonical Geant4 domain knowledge in a top-level `knowledge
 
 - **Examples** — canonical skeleton patterns, class hierarchy, common component patterns
 - **Development** — build system, CMake, iterative development workflow, common mistakes
+- **Geometry** — solids, placement (`G4PVPlacement`/`G4PVReplica`/`G4PVParameterised`), overlap checking, regions, fields, GDML
+- **Physics lists** — choosing a reference list, EM physics options, optical physics, production cuts, biasing
+- **Scoring and output** — choosing between sensitive detectors, primitive scorers, and stepping-action accumulators; `G4AnalysisManager` and `G4Accumulable`
+- **Multithreading** — run manager setup, master/worker responsibilities, shared-state pitfalls, per-thread RNG
 - **Validation** — geometry, physics, output, and statistical validation strategies
+- **Troubleshooting** — common build/runtime failure symptoms and their causes
 
 The canonical source is the `knowledge/` directory. When a particular agent runtime bundles selected knowledge into a `references/` directory, prefer the bundled version for that runtime, but understand that `knowledge/` remains authoritative.
 
@@ -44,6 +49,8 @@ understand the problem
 ```
 
 Avoid generating a complete application in one large step. Iteration catches mistakes early.
+
+If a build or run fails, or output looks physically implausible, consult `knowledge/troubleshooting.md` before guessing — it maps common symptoms (empty hits collections, navigator warnings, MT-vs-serial discrepancies, zero energy deposit) to their usual causes.
 
 ## After completing work
 

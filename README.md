@@ -26,7 +26,12 @@ llm4geant4/
 ├── knowledge/                       # Canonical Geant4 domain knowledge
 │   ├── examples.md                  # Application patterns and class hierarchy
 │   ├── development.md               # Build system, workflow, common mistakes
-│   └── validation.md                # Physics and software validation
+│   ├── geometry.md                  # Solids, placement, regions, fields, GDML
+│   ├── physics-lists.md             # Reference lists, EM/optical physics, cuts, biasing
+│   ├── scoring-and-output.md        # Sensitive detectors, scorers, G4AnalysisManager
+│   ├── multithreading.md            # Run manager, master/worker responsibilities, shared state
+│   ├── validation.md                # Physics and software validation
+│   └── troubleshooting.md           # Common failure symptoms and causes
 ├── benchmarks/                      # Scored benchmarks for agent evaluation
 │   └── basic-001-muon-scintillator/
 │       ├── task.md                  # Task presented to the agent

@@ -53,6 +53,8 @@ Do not register user actions directly in `main()` via `runManager->SetUserAction
 - Create `G4THitsCollection<MyHit>` per event
 - Store hits in `G4HCofThisEvent` via `GetCollectionID()`
 - Hits should capture: energy deposit, position, time, track ID, particle type
+- In multithreaded mode, register sensitive detectors in `ConstructSDandField()` (called once per worker thread), not in `Construct()` — see `knowledge/multithreading.md`.
+- For simple aggregate quantities (total energy deposit, dose, track length) with no need for per-hit track-level detail, prefer a `G4MultiFunctionalDetector` with a built-in primitive scorer (e.g. `G4PSEnergyDeposit`) over a custom hit class — see `knowledge/scoring-and-output.md` for the full comparison of scoring approaches.
 
 ## Primary generator
 
