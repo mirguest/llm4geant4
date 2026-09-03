@@ -1,0 +1,12 @@
+# Benchmark runner outputs and local, user-specific configuration.
+benchmarks/runner/results/
+benchmarks/runner/agents.yaml
+benchmarks/runner/matrix.yaml
+benchmarks/runner/judge.yaml
+
+# Python
+__pycache__/
+*.pyc
+
+# Editor/OS
+.DS_Store

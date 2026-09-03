@@ -1,0 +1,20 @@
+# Smoke-test matrix using the built-in "mock" agent (no real coding agent or
+# Geant4 installation required). Useful to sanity-check that run_matrix.py,
+# the evaluator, and compare.py work end to end before pointing the matrix
+# at real agents.
+#
+#   python3 run_matrix.py --matrix matrix.mock.yaml --report /tmp/mock-report.md
+
+benchmarks:
+  - basic-001-muon-scintillator
+
+conditions:
+  - baseline
+  - treatment
+
+repeats: 1
+
+runs:
+  - agent: mock
+    models:
+      - mock-model

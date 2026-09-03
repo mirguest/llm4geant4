@@ -1,0 +1,52 @@
+# Example agent adapter configuration for benchmarks/runner.
+#
+# Each entry defines how to invoke one coding agent non-interactively.
+# `command` is a shell command template (run with shell=True, cwd set to
+# the run's isolated workspace) with these placeholders available:
+#
+#   {model}        - the model identifier for this run (from matrix.yaml,
+#                     or --model on the CLI)
+#   {prompt_file}  - absolute path to the prompt file (task.md content,
+#                     plus the treatment-condition addendum if applicable)
+#   {runner_dir}   - absolute path to benchmarks/runner (useful for
+#                     referencing fixtures, as the "mock" entry below does)
+#
+# These commands are trusted local configuration, like a Makefile target --
+# do not point agents.yaml at a file you would not trust to run a shell
+# command on your machine. Agent CLIs change over time; verify the exact
+# flags against the version you have installed before relying on results.
+#
+# Copy this file (e.g. to agents.yaml) and adjust for your environment.
+
+agents:
+  # Claude Code, headless/print mode. Requires the `claude` CLI on PATH and
+  # authenticated. `--permission-mode acceptEdits` lets it write files
+  # without interactive prompts; adjust to your risk tolerance.
+  claude-code:
+    command: >-
+      claude -p "$(cat {prompt_file})"
+      --model {model}
+      --permission-mode acceptEdits
+    timeout_seconds: 1800
+
+  # OpenCode (https://opencode.ai). Flags shown are a starting point --
+  # confirm against your installed version with `opencode --help`.
+  opencode:
+    command: >-
+      opencode run "$(cat {prompt_file})" --model {model}
+    timeout_seconds: 1800
+
+  # Generic escape hatch for any other CLI-driven agent: point this at a
+  # wrapper script that reads $1 (the prompt file) and $MODEL, and runs
+  # non-interactively in the current directory.
+  generic:
+    command: "./run_agent.sh {prompt_file} {model}"
+    timeout_seconds: 1800
+
+  # No real agent or Geant4 required. Copies a canned fixture solution into
+  # the workspace -- used by tests/ and to sanity-check the run/score/report
+  # pipeline end to end. Set MOCK_AGENT_QUALITY=bad in your shell to use the
+  # deliberately poor fixture instead of the default "good" one.
+  mock:
+    command: "python3 {runner_dir}/tests/fixtures/mock_agent.py"
+    timeout_seconds: 60
