@@ -1,0 +1,29 @@
+# Example run matrix for benchmarks/runner/run_matrix.py.
+#
+# Runs every (benchmark x agent x model x condition) combination `repeats`
+# times (agent output is stochastic; repeats let the report show mean +/-
+# spread rather than a single noisy sample).
+#
+# Copy this file, trim/extend the `runs` list to the agents and models you
+# actually have configured in agents.yaml, and point run_matrix.py at it:
+#
+#   python3 run_matrix.py --matrix matrix.yaml --agents-config agents.yaml
+
+benchmarks:
+  - basic-001-muon-scintillator
+
+conditions:
+  - baseline
+  - treatment
+
+repeats: 3
+
+runs:
+  - agent: claude-code
+    models:
+      - claude-sonnet-5
+      - claude-opus-5
+
+  - agent: opencode
+    models:
+      - some-model-id

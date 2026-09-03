@@ -1,0 +1,21 @@
+# Example LLM-judge configuration for benchmarks/runner/judge.py.
+#
+# Same command-template mechanism as agents.example.yaml ({model},
+# {prompt_file} placeholders), but the judge's stdout is captured and
+# parsed as JSON rather than treated as a workspace of edited files -- so
+# use a plain, non-file-editing invocation. The judge runs with cwd set to
+# a scratch temp directory, never the workspace being judged.
+#
+# Copy this file (e.g. to judge.yaml) and adjust for your environment.
+
+judges:
+  claude-code:
+    command: >-
+      claude -p "$(cat {prompt_file})" --model {model}
+    timeout_seconds: 300
+
+  # Any other CLI-driven model works the same way, as long as it prints its
+  # answer to stdout for a single non-interactive prompt.
+  generic:
+    command: "./run_judge.sh {prompt_file} {model}"
+    timeout_seconds: 300

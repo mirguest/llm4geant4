@@ -33,11 +33,13 @@ llm4geant4/
 │   ├── validation.md                # Physics and software validation
 │   └── troubleshooting.md           # Common failure symptoms and causes
 ├── benchmarks/                      # Scored benchmarks for agent evaluation
-│   └── basic-001-muon-scintillator/
-│       ├── task.md                  # Task presented to the agent
-│       ├── rubric.yaml              # Evaluation criteria
-│       ├── reference/               # Frozen reference simulations (future)
-│       └── evaluator/               # Evaluator tooling (future)
+│   ├── basic-001-muon-scintillator/
+│   │   ├── task.md                  # Task presented to the agent
+│   │   ├── rubric.yaml              # Evaluation criteria
+│   │   ├── reference/               # Frozen reference simulations (future)
+│   │   └── evaluator/               # Automated (heuristic) scoring for this benchmark
+│   └── runner/                      # Automates running/scoring benchmarks across agents and models
+│       └── README.md                # How to run and compare an agent x model matrix
 └── adapters/                        # Agent-specific adapters (future)
     └── README.md
 ```
@@ -55,6 +57,8 @@ The first experiment (benchmark `basic-001-muon-scintillator`) is designed to an
 
 > Does providing a coding agent with structured Geant4 domain knowledge improve the quality of the generated simulation software?
 
+`benchmarks/runner/` automates steps 2–4 across a matrix of coding agents (Claude Code, OpenCode, etc.) and models: it builds an isolated workspace per run (enforcing the baseline/treatment isolation rules in code, not just prose), invokes each agent non-interactively, scores the result against the benchmark's rubric, and produces a comparison report. See `benchmarks/runner/README.md`.
+
 Future benchmarks will cover more complex geometries, physics, and detector configurations.
 
 ## Requirements
@@ -63,6 +67,7 @@ Future benchmarks will cover more complex geometries, physics, and detector conf
 - C++17 or later
 - CMake 3.16+
 - A compatible coding agent (Claude Code, Codex, OpenCode, etc.)
+- Python 3.9+ and PyYAML, only for `benchmarks/runner/` (the automated comparison tooling)
 
 ## Usage
 
